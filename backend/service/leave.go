@@ -4,6 +4,8 @@ type LeaveService interface {
 	AddLeave(AddLeaveRequest, uint) (*LeaveResponse, error)
 	GetLeavesByUser(uint) (*LeaveResponseWithCount, error)
 	GetLeaves() ([]LeaveResponse, error)
+	ApproveLeave(uint) error
+	RejectLeave(uint) error
 }
 
 type AddLeaveRequest struct {

@@ -3,6 +3,7 @@ package handler
 import (
 	"leave-manager/service"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -62,4 +63,34 @@ func (h *leaveHandler) GetLeaves(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, leaves)
+}
+
+func (h *leaveHandler) ApproveLeave(c *gin.Context) {
+	leaveId := c.Param("id")
+	id, err := strconv.ParseUint(leaveId, 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid leave ID"})
+		return
+	}
+	err = h.leaveService.ApproveLeave(uint(id))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "Leave approved"})
+}
+
+func (h *leaveHandler) RejectLeave(c *gin.Context) {
+	leaveId := c.Param("id")
+	id, err := strconv.ParseUint(leaveId, 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid leave ID"})
+		return
+	}
+	err = h.leaveService.RejectLeave(uint(id))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "Leave rejected"})
 }

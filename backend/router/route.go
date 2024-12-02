@@ -20,6 +20,8 @@ func setLeaveRoute(r *gin.Engine, db *gorm.DB) {
 	r.GET("/leaves", leaveHandler.GetLeaves)
 	r.POST("/leaves", leaveHandler.AddLeave)
 	r.GET("/leaves/me", leaveHandler.GetUserLeaves)
+	r.POST("/leaves/accept/:id", leaveHandler.ApproveLeave)
+	r.POST("/leaves/reject/:id", leaveHandler.RejectLeave)
 	// Uncomment when needed
 	// r.PUT("/leaves/:id", leaveHandler.UpdateLeave)
 	// r.DELETE("/leaves/:id", leaveHandler.DeleteLeave)

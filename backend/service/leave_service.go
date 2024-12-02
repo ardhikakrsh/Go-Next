@@ -133,3 +133,35 @@ func (s *leaveService) GetLeaves() ([]LeaveResponse, error) {
 
 	return res, nil
 }
+
+func (s *leaveService) ApproveLeave(leaveId uint) error {
+	var leave model.Leave
+	if err := s.db.First(&leave, leaveId).Error; err != nil {
+		fmt.Printf("Error finding leave with ID %d: %v\n", leaveId, err)
+		return err
+	}
+
+	leave.Status = "approved"
+	if err := s.db.Save(&leave).Error; err != nil {
+		fmt.Printf("Error approving leave with ID %d: %v\n", leaveId, err)
+		return err
+	}
+
+	return nil
+}
+
+func (s *leaveService) RejectLeave(leaveId uint) error {
+	var leave model.Leave
+	if err := s.db.First(&leave, leaveId).Error; err != nil {
+		fmt.Printf("Error finding leave with ID %d: %v\n", leaveId, err)
+		return err
+	}
+
+	leave.Status = "rejected"
+	if err := s.db.Save(&leave).Error; err != nil {
+		fmt.Printf("Error rejecting leave with ID %d: %v\n", leaveId, err)
+		return err
+	}
+
+	return nil
+}
