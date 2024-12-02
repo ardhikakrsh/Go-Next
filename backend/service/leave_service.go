@@ -19,7 +19,7 @@ func NewLeaveService(db *gorm.DB) LeaveService {
 	}
 }
 
-func (s leaveService) AddLeave(req AddLeaveRequest, userId uint) (*LeaveResponse, error) {
+func (s *leaveService) AddLeave(req AddLeaveRequest, userId uint) (*LeaveResponse, error) {
 	timeStartDate, err := time.Parse(time.RFC3339, req.TimeStart)
 	if err != nil {
 		fmt.Printf("Error parsing start date: %v\n", err)
@@ -59,7 +59,7 @@ func (s leaveService) AddLeave(req AddLeaveRequest, userId uint) (*LeaveResponse
 	}, nil
 }
 
-func (s leaveService) GetLeavesByUser(userId uint) (*LeaveResponseWithCount, error) {
+func (s *leaveService) GetLeavesByUser(userId uint) (*LeaveResponseWithCount, error) {
 	var leaves []model.Leave
 	if err := s.db.Where("user_id = ?", userId).Find(&leaves).Error; err != nil {
 		fmt.Printf("Error getting leaves by user %d: %v\n", userId, err)
@@ -104,11 +104,16 @@ func (s leaveService) GetLeavesByUser(userId uint) (*LeaveResponseWithCount, err
 	}, nil
 }
 
-func (s leaveService) GetLeaves() ([]LeaveResponse, error) {
+func (s *leaveService) GetLeaves() ([]LeaveResponse, error) {
 	var leaves []model.Leave
 	if err := s.db.Find(&leaves).Error; err != nil {
-		fmt.Printf("Error getting leaves: %v\n", err)
+		fmt.Printf("Error finding leaves: %v\n", err)
 		return nil, err
+	}
+
+	if len(leaves) == 0 {
+		fmt.Println("No leaves found")
+		return nil, nil
 	}
 
 	var res []LeaveResponse

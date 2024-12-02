@@ -61,6 +61,5 @@ func (h *leaveHandler) GetLeaves(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
 	c.JSON(http.StatusOK, leaves)
 }
