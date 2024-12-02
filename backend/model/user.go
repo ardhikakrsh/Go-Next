@@ -11,6 +11,6 @@ type User struct {
 	Password  string  `json:"-"`
 	FirstName string  `json:"firstName"`
 	LastName  string  `json:"lastName"`
-	Role      string  `json:"role"`
+	Roles     string  `json:"role"`
 	Leaves    []Leave `gorm:"foreignKey:UserID" json:"leaves"`
 }
