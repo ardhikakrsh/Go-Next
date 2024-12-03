@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"leave-manager/helper"
 	"leave-manager/model"
 
 	"golang.org/x/crypto/bcrypt"
@@ -9,14 +10,12 @@ import (
 )
 
 type authService struct {
-	db         *gorm.DB
-	jwtService JwtService
+	db *gorm.DB
 }
 
 func NewAuthService(db *gorm.DB) AuthService {
 	return &authService{
-		db:         db,
-		jwtService: NewJwtService(),
+		db: db,
 	}
 }
 
@@ -47,7 +46,7 @@ func (s *authService) Signup(req NewSignupRequest) (*NewSignupResponse, error) {
 	}, nil
 }
 
-func (s authService) Login(req LoginRequest) (*LoginResponse, error) {
+func (s *authService) Login(req LoginRequest) (*LoginResponse, error) {
 	user := model.User{}
 	s.db.Preload("Leaves").First(&user, "username = ?", req.Username)
 	if user.Username == "" {
@@ -58,25 +57,24 @@ func (s authService) Login(req LoginRequest) (*LoginResponse, error) {
 	if err != nil {
 		return nil, errors.New("wrong password")
 	}
-	accessTokenInfo := AccessTokenInfo{
-		UserId:   user.ID,
-		Username: user.Username,
-	}
-	accessToken, err := s.jwtService.GenerateToken(accessTokenInfo, 3600000)
+
+	accessToken, err := helper.GenerateToken(user.ID, "user")
 	if err != nil {
 		return nil, err
 	}
+
 	countSick := 0
 	countBusiness := 0
 	countVacation := 0
 	LeaveResponses := []LeaveResponse{}
 	for _, leave := range user.Leaves {
-		if leave.Type == "ลาป่วย" {
-			countSick += 1
-		} else if leave.Type == "ลากิจ" {
-			countBusiness += 1
-		} else if leave.Type == "ลาพักร้อน" {
-			countVacation += 1
+		switch leave.Type {
+		case "sick":
+			countSick++
+		case "business":
+			countBusiness++
+		case "vacation":
+			countVacation++
 		}
 		LeaveResponses = append(LeaveResponses, LeaveResponse{
 			ID:        leave.ID,
