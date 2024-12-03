@@ -1,5 +1,5 @@
 import React, { SyntheticEvent, useState } from "react";
-import Nav from "../components/user/Nav";
+import Navbar from "../components/Navbar";
 import axios from "axios";
 import { useRouter } from "next/router";
 import { useDispatch } from "react-redux";
@@ -38,7 +38,7 @@ function Login() {
 
   return (
     <div className="p-2">
-      <Nav />
+      <Navbar />
       <div className="hero min-h-screen">
         <div className="hero-content flex-col lg:flex-row-reverse">
           <div className="card flex-shrink-0 w-96 shadow-2xl bg-base-100">
