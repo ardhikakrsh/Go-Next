@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"fmt"
 	"leave-manager/helper"
 	"net/http"
 
@@ -43,6 +44,9 @@ func RoleRequired(requiredRole string) gin.HandlerFunc {
 			c.Abort()
 			return
 		}
+
+		fmt.Println("Extracted userRole:", userRole)
+		fmt.Println("Extracted userID:", userID)
 
 		if userRole != requiredRole {
 			c.JSON(http.StatusForbidden, gin.H{"error": "forbidden"})

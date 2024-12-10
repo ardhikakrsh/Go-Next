@@ -30,6 +30,7 @@ func (s *leaveService) AddLeave(req AddLeaveRequest, userId uint) (*LeaveRespons
 		fmt.Printf("Error parsing end date: %v\n", err)
 		return nil, err
 	}
+
 	fmt.Printf("Parsed end date: %v\n", timeEndDate)
 
 	leave := model.Leave{
@@ -120,6 +121,7 @@ func (s *leaveService) GetLeaves() ([]LeaveResponse, error) {
 	for _, leave := range leaves {
 		res = append(res, LeaveResponse{
 			ID:        leave.ID,
+			UserID:    leave.UserID,
 			Type:      leave.Type,
 			Detail:    leave.Detail,
 			TimeStart: leave.TimeStart.Format(time.RFC3339),

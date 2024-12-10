@@ -23,6 +23,10 @@ func (h *authHandler) Signup(c *gin.Context) {
 		return
 	}
 
+	if req.Roles == "" {
+		req.Roles = "user"
+	}
+
 	res, err := h.service.Signup(req)
 	if err != nil {
 		c.JSON(400, gin.H{"error": err.Error()})
@@ -44,13 +48,11 @@ func (h *authHandler) Login(c *gin.Context) {
 		return
 	}
 
-	// Set access token in cookies
 	c.SetCookie("access_token", res.Token, 600, "/", "", false, true)
 	c.JSON(200, res)
 }
 
 func (h *authHandler) Logout(c *gin.Context) {
-	// Clear the access token cookie
 	c.SetCookie("access_token", "", -1, "/", "", false, true)
-	c.String(200, "Logged out successfully")
+	c.JSON(200, gin.H{"message": "logout successful"})
 }

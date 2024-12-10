@@ -3,6 +3,7 @@ package service
 type AuthService interface {
 	Signup(NewSignupRequest) (*NewSignupResponse, error)
 	Login(req LoginRequest) (*LoginResponse, error)
+	Logout() error
 }
 
 type NewSignupRequest struct {
@@ -10,6 +11,7 @@ type NewSignupRequest struct {
 	Password  string `json:"password"`
 	FirstName string `json:"first_name"`
 	LastName  string `json:"last_name"`
+	Roles     string `json:"roles"`
 }
 
 type NewSignupResponse struct {
@@ -17,6 +19,7 @@ type NewSignupResponse struct {
 	Username  string `json:"username"`
 	FirstName string `json:"first_name"`
 	LastName  string `json:"last_name"`
+	Roles     string `json:"roles"`
 }
 
 type LoginRequest struct {

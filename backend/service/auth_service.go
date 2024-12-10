@@ -35,6 +35,7 @@ func (s *authService) Signup(req NewSignupRequest) (*NewSignupResponse, error) {
 		Password:  string(hash),
 		FirstName: req.FirstName,
 		LastName:  req.LastName,
+		Roles:     req.Roles,
 	}
 
 	s.db.Create(&newUser)
@@ -43,6 +44,7 @@ func (s *authService) Signup(req NewSignupRequest) (*NewSignupResponse, error) {
 		Username:  newUser.Username,
 		FirstName: newUser.FirstName,
 		LastName:  newUser.LastName,
+		Roles:     newUser.Roles,
 	}, nil
 }
 
@@ -58,7 +60,7 @@ func (s *authService) Login(req LoginRequest) (*LoginResponse, error) {
 		return nil, errors.New("wrong password")
 	}
 
-	accessToken, err := helper.GenerateToken(user.ID, "user")
+	accessToken, err := helper.GenerateToken(user.ID, user.Roles)
 	if err != nil {
 		return nil, err
 	}
@@ -98,4 +100,8 @@ func (s *authService) Login(req LoginRequest) (*LoginResponse, error) {
 		},
 		Token: accessToken,
 	}, nil
+}
+
+func (s *authService) Logout() error {
+	return nil
 }

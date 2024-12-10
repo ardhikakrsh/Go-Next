@@ -20,7 +20,7 @@ func NewLeaveHandler(leaveService service.LeaveService) *leaveHandler {
 
 func (h *leaveHandler) AddLeave(c *gin.Context) {
 	var req service.AddLeaveRequest
-	userId, exists := c.Get("userId")
+	userId, exists := c.Get("userID")
 	if !exists {
 		c.JSON(http.StatusUnauthorized, gin.H{"Error": "User ID not found in context"})
 		return
@@ -41,7 +41,7 @@ func (h *leaveHandler) AddLeave(c *gin.Context) {
 }
 
 func (h *leaveHandler) GetUserLeaves(c *gin.Context) {
-	userId, exists := c.Get("userId")
+	userId, exists := c.Get("userID")
 	if !exists {
 		c.JSON(http.StatusUnauthorized, gin.H{"Error": "User ID not found in context"})
 		return
