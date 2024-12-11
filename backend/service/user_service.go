@@ -1,6 +1,7 @@
 package service
 
 import (
+	"errors"
 	"fmt"
 
 	"leave-manager/model"
@@ -35,4 +36,83 @@ func (s userService) GetUsers() ([]GetUserResponse, error) {
 	}
 	fmt.Println(res)
 	return res, nil
+}
+
+func (s *userService) GetUserById(userId uint) (*GetUserResponse, error) {
+	var user model.User
+	if err := s.db.Preload("Leaves").First(&user, userId).Error; err != nil {
+		fmt.Printf("Error finding user record: %v\n", err)
+		return nil, fmt.Errorf("user not found: %v", err)
+	}
+
+	return &GetUserResponse{
+		ID:        user.ID,
+		Username:  user.Username,
+		FirstName: user.FirstName,
+		LastName:  user.LastName,
+		Leaves:    user.Leaves,
+		Roles:     user.Roles,
+	}, nil
+}
+
+func (s *userService) AddUser(req AddUserRequest) (*GetUserResponse, error) {
+	user := model.User{
+		Username:  req.Username,
+		Password:  req.Password,
+		FirstName: req.FirstName,
+		LastName:  req.LastName,
+		Roles:     "user",
+	}
+	if err := s.db.Create(&user).Error; err != nil {
+		fmt.Printf("Error creating user record: %v\n", err)
+		return nil, err
+	}
+	return &GetUserResponse{
+		ID:        user.ID,
+		Username:  user.Username,
+		FirstName: user.FirstName,
+		LastName:  user.LastName,
+		Roles:     user.Roles,
+	}, nil
+}
+
+func (s *userService) EditUser(req AddUserRequest, userId uint) (*GetUserResponseSimple, error) {
+	var user model.User
+	if err := s.db.First(&user, userId).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, fmt.Errorf("user with id %d not found", userId)
+		}
+		fmt.Printf("Error finding user record: %v\n", err)
+		return nil, err
+	}
+
+	user.Username = req.Username
+	user.FirstName = req.FirstName
+	user.LastName = req.LastName
+
+	if err := s.db.Save(&user).Error; err != nil {
+		fmt.Printf("Error saving user record: %v\n", err)
+		return nil, err
+	}
+
+	return &GetUserResponseSimple{
+		ID:        user.ID,
+		Username:  user.Username,
+		FirstName: user.FirstName,
+		LastName:  user.LastName,
+		Roles:     user.Roles,
+	}, nil
+}
+
+func (s *userService) DeleteUser(userId uint) error {
+	var user model.User
+	if err := s.db.First(&user, userId).Error; err != nil {
+		fmt.Printf("Error finding user record: %v\n", err)
+		return err
+	}
+	if err := s.db.Delete(&user).Error; err != nil {
+		fmt.Printf("Error deleting user record: %v\n", err)
+		return err
+	}
+	return nil
 }
