@@ -76,7 +76,7 @@ func (s *leaveService) GetLeavesByUser(userId uint) (*LeaveResponseWithCount, er
 			countSick += 1
 		} else if leave.Type == "absen" {
 			countBusiness += 1
-		} else if leave.Type == "liburan" { 
+		} else if leave.Type == "liburan" {
 			countVacation += 1
 		}
 	}
@@ -162,6 +162,65 @@ func (s *leaveService) RejectLeave(leaveId uint) error {
 	leave.Status = "rejected"
 	if err := s.db.Save(&leave).Error; err != nil {
 		fmt.Printf("Error rejecting leave with ID %d: %v\n", leaveId, err)
+		return err
+	}
+
+	return nil
+}
+
+func (s *leaveService) EditLeave(leaveId uint, req EditLeaveRequest) (*LeaveResponse, error) {
+	var leave model.Leave
+	if err := s.db.First(&leave, leaveId).Error; err != nil {
+		fmt.Printf("Error finding leave with ID %d: %v\n", leaveId, err)
+		return nil, err
+	}
+
+	timeStartDate, err := time.Parse(time.RFC3339, req.TimeStart)
+	if err != nil {
+		fmt.Printf("Error parsing start date: %v\n", err)
+		return nil, err
+	}
+	timeEndDate, err := time.Parse(time.RFC3339, req.TimeEnd)
+	if err != nil {
+		fmt.Printf("Error parsing end date: %v\n", err)
+		return nil, err
+	}
+
+	leave.TimeStart = timeStartDate
+	leave.TimeEnd = timeEndDate
+	leave.Type = req.Type
+	leave.Detail = req.Detail
+	leave.LeaveDay = uint(timeEndDate.Sub(timeStartDate).Hours() / 24)
+	leave.UpdatedAt = time.Now()
+
+	if err := s.db.Save(&leave).Error; err != nil {
+		fmt.Printf("Error saving leave with ID %d: %v\n", leaveId, err)
+		return nil, err
+	}
+
+	return &LeaveResponse{
+		ID:        leave.ID,
+		UserID:    leave.UserID,
+		Type:      leave.Type,
+		Detail:    leave.Detail,
+		TimeStart: leave.TimeStart.Format(time.RFC3339),
+		TimeEnd:   leave.TimeEnd.Format(time.RFC3339),
+		CreatedAt: leave.CreatedAt.Format(time.RFC3339),
+		UpdatedAt: leave.UpdatedAt.Format(time.RFC3339),
+		LeaveDay:  leave.LeaveDay,
+		Status:    leave.Status,
+	}, nil
+}
+
+func (s *leaveService) DeleteLeave(leaveId uint) error {
+	var leave model.Leave
+	if err := s.db.First(&leave, leaveId).Error; err != nil {
+		fmt.Printf("Error finding leave with ID %d: %v\n", leaveId, err)
+		return err
+	}
+
+	if err := s.db.Delete(&leave).Error; err != nil {
+		fmt.Printf("Error deleting leave with ID %d: %v\n", leaveId, err)
 		return err
 	}
 

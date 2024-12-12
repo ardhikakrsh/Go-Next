@@ -6,6 +6,8 @@ type LeaveService interface {
 	GetLeaves() ([]LeaveResponse, error)
 	ApproveLeave(uint) error
 	RejectLeave(uint) error
+	EditLeave(uint, EditLeaveRequest) (*LeaveResponse, error)
+	DeleteLeave(uint) error
 }
 
 type AddLeaveRequest struct {
@@ -13,6 +15,14 @@ type AddLeaveRequest struct {
 	Detail    string `json:"detail"`
 	TimeStart string `json:"time_start"`
 	TimeEnd   string `json:"time_end"`
+}
+
+type EditLeaveRequest struct {
+	Type      string `json:"type"`
+	Detail    string `json:"detail"`
+	TimeStart string `json:"time_start"`
+	TimeEnd   string `json:"time_end"`
+	UpdatedAt string `json:"updated_at"`
 }
 
 type LeaveResponse struct {

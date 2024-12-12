@@ -27,6 +27,8 @@ func setLeaveRoute(r *gin.RouterGroup, db *gorm.DB) {
 	leaveHandler := handler.NewLeaveHandler(service.NewLeaveService(db))
 	r.POST("/leaves", leaveHandler.AddLeave)
 	r.GET("/leaves/me", leaveHandler.GetUserLeaves)
+	r.PUT("/leaves/:id", leaveHandler.EditLeave)
+	r.DELETE("/leaves/:id", leaveHandler.DeleteLeave)
 
 	adminGroup := r.Group("/leaves")
 	adminGroup.Use(middleware.RoleRequired("admin"))
