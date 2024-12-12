@@ -6,6 +6,7 @@ import (
 
 	"leave-manager/model"
 
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
@@ -56,9 +57,15 @@ func (s *userService) GetUserById(userId uint) (*GetUserResponse, error) {
 }
 
 func (s *userService) AddUser(req AddUserRequest) (*GetUserResponse, error) {
+	hash, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
+	if err != nil {
+		fmt.Printf("Error hashing password: %v\n", err)
+		return nil, err
+	}
+
 	user := model.User{
 		Username:  req.Username,
-		Password:  req.Password,
+		Password:  string(hash),
 		FirstName: req.FirstName,
 		LastName:  req.LastName,
 		Roles:     req.Roles,
