@@ -168,11 +168,15 @@ func (s *leaveService) RejectLeave(leaveId uint) error {
 	return nil
 }
 
-func (s *leaveService) EditLeave(leaveId uint, req EditLeaveRequest) (*LeaveResponse, error) {
+func (s *leaveService) EditLeave(userId uint, leaveId uint, roles string, req EditLeaveRequest) (*LeaveResponse, error) {
 	var leave model.Leave
 	if err := s.db.First(&leave, leaveId).Error; err != nil {
 		fmt.Printf("Error finding leave with ID %d: %v\n", leaveId, err)
 		return nil, err
+	}
+
+	if leave.UserID != userId && roles != "admin" {
+		return nil, fmt.Errorf("user %d is not authorized to edit leave %d", userId, leaveId)
 	}
 
 	timeStartDate, err := time.Parse(time.RFC3339, req.TimeStart)
@@ -212,16 +216,20 @@ func (s *leaveService) EditLeave(leaveId uint, req EditLeaveRequest) (*LeaveResp
 	}, nil
 }
 
-func (s *leaveService) DeleteLeave(leaveId uint) error {
+func (s *leaveService) DeleteLeave(leaveId uint, userId uint, roles string) error {
 	var leave model.Leave
 	if err := s.db.First(&leave, leaveId).Error; err != nil {
 		fmt.Printf("Error finding leave with ID %d: %v\n", leaveId, err)
 		return err
 	}
 
-	if err := s.db.Delete(&leave).Error; err != nil {
-		fmt.Printf("Error deleting leave with ID %d: %v\n", leaveId, err)
-		return err
+	if leave.UserID != userId && roles != "admin" {
+		return fmt.Errorf("user %d is not authorized to delete leave %d", userId, leaveId)
+	} else {
+		if err := s.db.Delete(&leave).Error; err != nil {
+			fmt.Printf("Error deleting leave with ID %d: %v\n", leaveId, err)
+			return err
+		}
 	}
 
 	return nil

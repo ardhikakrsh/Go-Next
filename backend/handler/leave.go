@@ -104,6 +104,18 @@ func (h *leaveHandler) EditLeave(c *gin.Context) {
 		return
 	}
 
+	userID, exists := c.Get("userID")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"Error": "User ID not found in context"})
+		return
+	}
+
+	roles, exists := c.Get("roles")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"Error": "Roles not found in context"})
+		return
+	}
+
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -111,7 +123,7 @@ func (h *leaveHandler) EditLeave(c *gin.Context) {
 
 	leaveIdUint := uint(id)
 
-	res, err := h.leaveService.EditLeave(leaveIdUint, req)
+	res, err := h.leaveService.EditLeave(userID.(uint), leaveIdUint, roles.(string), req)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -128,7 +140,19 @@ func (h *leaveHandler) DeleteLeave(c *gin.Context) {
 		return
 	}
 
-	err = h.leaveService.DeleteLeave(uint(id))
+	userId, exists := c.Get("userID")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"Error": "User ID not found in context"})
+		return
+	}
+
+	roles, exists := c.Get("roles")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"Error": "Roles not found in context"})
+		return
+	}
+
+	err = h.leaveService.DeleteLeave(uint(id), userId.(uint), roles.(string))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
