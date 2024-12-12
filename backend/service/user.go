@@ -15,8 +15,8 @@ type GetUserResponse struct {
 	Username  string        `json:"username"`
 	FirstName string        `json:"first_name"`
 	LastName  string        `json:"last_name"`
-	Leaves    []model.Leave `json:"leaves"`
 	Roles     string        `json:"roles"`
+	Leaves    []model.Leave `json:"leaves"`
 }
 
 type GetUserResponseSimple struct {
@@ -32,4 +32,5 @@ type AddUserRequest struct {
 	Password  string `json:"password"`
 	FirstName string `json:"first_name"`
 	LastName  string `json:"last_name"`
+	Roles     string `json:"roles"`
 }

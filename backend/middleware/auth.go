@@ -10,6 +10,7 @@ import (
 
 func VerifyLogin(c *gin.Context) {
 	cookie, err := c.Cookie("access_token")
+	fmt.Println("Cookie:", cookie)
 	if err != nil || cookie == "" {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
 		c.Abort()
@@ -18,6 +19,7 @@ func VerifyLogin(c *gin.Context) {
 
 	userID, roles, err := helper.ExtractToken(cookie)
 	if err != nil {
+		fmt.Println("Error extracting token:", err)
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
 		c.Abort()
 		return
@@ -60,3 +62,31 @@ func RoleRequired(requiredRole string) gin.HandlerFunc {
 		c.Next()
 	}
 }
+
+func RedirectByRole(c *gin.Context) {
+	roles, exists := c.Get("roles")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		c.Abort()
+		return
+	}
+
+	role, ok := roles.(string)
+	if !ok {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "invalid role type"})
+		c.Abort()
+		return
+	}
+
+	switch role {
+	case "admin":
+		c.Redirect(http.StatusMovedPermanently, "/admin")
+	case "user":
+		c.Redirect(http.StatusMovedPermanently, "/user")
+	default:
+		c.JSON(http.StatusForbidden, gin.H{"error": "forbidden"})
+		c.Abort()
+	}
+}
+
+	

@@ -34,6 +34,7 @@ type LoginResponse struct {
 	LastName                string                 `json:"last_name"`
 	LeaveResponsesWithCount LeaveResponseWithCount `json:"leave_response_with_count"`
 	Token                   string                 `json:"token"`
+	Roles                   string                 `json:"roles"`
 }
 
 type AccessTokenInfo struct {

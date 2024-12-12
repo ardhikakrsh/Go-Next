@@ -61,7 +61,7 @@ func (s *userService) AddUser(req AddUserRequest) (*GetUserResponse, error) {
 		Password:  req.Password,
 		FirstName: req.FirstName,
 		LastName:  req.LastName,
-		Roles:     "user",
+		Roles:     req.Roles,
 	}
 	if err := s.db.Create(&user).Error; err != nil {
 		fmt.Printf("Error creating user record: %v\n", err)
@@ -89,6 +89,7 @@ func (s *userService) EditUser(req AddUserRequest, userId uint) (*GetUserRespons
 	user.Username = req.Username
 	user.FirstName = req.FirstName
 	user.LastName = req.LastName
+	user.Roles = req.Roles
 
 	if err := s.db.Save(&user).Error; err != nil {
 		fmt.Printf("Error saving user record: %v\n", err)
