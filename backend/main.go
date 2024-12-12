@@ -8,6 +8,7 @@ import (
 	"leave-manager/model"
 	"leave-manager/router"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
@@ -32,8 +33,18 @@ func main() {
 	// Start Gin server
 	r := gin.Default()
 
+	r.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost:3000"}, // Frontend origin
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization", "Accept", "X-Requested-With"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+	}))
+
 	// Initialize routes
 	router.Init(r, db)
+
+	r.Run(":8000")
 
 	// Start the server
 	port := getEnv("PORT", "8000")
@@ -59,7 +70,7 @@ func initDatabase() *gorm.DB {
 	// 	getEnv("DB_PORT", "5432"),
 	// )
 
-	dsn := "postgresql://postgres@127.0.0.1/leave-managerDB?sslmode=disable"
+	dsn := "postgresql://postgres:Ardhikakrsh7@127.0.0.1/leave-managerDB?sslmode=disable"
 	// Koneksi ke database
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
