@@ -94,3 +94,45 @@ func (h *leaveHandler) RejectLeave(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "Leave rejected"})
 }
+
+func (h *leaveHandler) EditLeave(c *gin.Context) {
+	var req service.EditLeaveRequest
+	leaveId := c.Param("id")
+	id, err := strconv.ParseUint(leaveId, 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid leave ID"})
+		return
+	}
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	leaveIdUint := uint(id)
+
+	res, err := h.leaveService.EditLeave(leaveIdUint, req)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, res)
+}
+
+func (h *leaveHandler) DeleteLeave(c *gin.Context) {
+	leaveId := c.Param("id")
+	id, err := strconv.ParseUint(leaveId, 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid leave ID"})
+		return
+	}
+
+	err = h.leaveService.DeleteLeave(uint(id))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Leave deleted"})
+}
