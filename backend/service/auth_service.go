@@ -70,13 +70,12 @@ func (s *authService) Login(req LoginRequest) (*LoginResponse, error) {
 	countVacation := 0
 	LeaveResponses := []LeaveResponse{}
 	for _, leave := range user.Leaves {
-		switch leave.Type {
-		case "sick":
-			countSick++
-		case "business":
-			countBusiness++
-		case "vacation":
-			countVacation++
+		if leave.Type == "sakit" {
+			countSick += 1
+		} else if leave.Type == "absen" {
+			countBusiness += 1
+		} else if leave.Type == "liburan" { 
+			countVacation += 1
 		}
 		LeaveResponses = append(LeaveResponses, LeaveResponse{
 			ID:        leave.ID,
@@ -98,6 +97,7 @@ func (s *authService) Login(req LoginRequest) (*LoginResponse, error) {
 			CountBusiness: uint(countBusiness),
 			CountVacation: uint(countVacation),
 		},
+		Roles: user.Roles,
 		Token: accessToken,
 	}, nil
 }

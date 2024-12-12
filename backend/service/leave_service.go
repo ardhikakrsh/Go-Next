@@ -72,13 +72,12 @@ func (s *leaveService) GetLeavesByUser(userId uint) (*LeaveResponseWithCount, er
 	countVacation := 0
 
 	for _, leave := range leaves {
-		switch leave.Type {
-		case "sick":
-			countSick++
-		case "business":
-			countBusiness++
-		case "vacation":
-			countVacation++
+		if leave.Type == "sakit" {
+			countSick += 1
+		} else if leave.Type == "absen" {
+			countBusiness += 1
+		} else if leave.Type == "liburan" { 
+			countVacation += 1
 		}
 	}
 
@@ -119,6 +118,7 @@ func (s *leaveService) GetLeaves() ([]LeaveResponse, error) {
 
 	var res []LeaveResponse
 	for _, leave := range leaves {
+		fmt.Println(leaves)
 		res = append(res, LeaveResponse{
 			ID:        leave.ID,
 			UserID:    leave.UserID,
