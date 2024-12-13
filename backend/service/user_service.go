@@ -35,7 +35,6 @@ func (s userService) GetUsers() ([]GetUserResponse, error) {
 			Roles:     user.Roles,
 		})
 	}
-	fmt.Println(res)
 	return res, nil
 }
 

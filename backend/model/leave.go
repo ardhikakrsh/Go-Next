@@ -15,4 +15,5 @@ type Leave struct {
 	Detail    string    `json:"detail"`
 	UserID    uint      `json:"userId"`
 	LeaveDay  uint      `json:"leaveDay"`
+	User 	User      `json:"user"`
 }

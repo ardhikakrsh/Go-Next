@@ -28,6 +28,7 @@ type EditLeaveRequest struct {
 type LeaveResponse struct {
 	ID        uint   `json:"id"`
 	UserID    uint   `json:"user_id"`
+	FirstName string `json:"firstName"`
 	Type      string `json:"type"`
 	Status    string `json:"status"`
 	Detail    string `json:"detail"`

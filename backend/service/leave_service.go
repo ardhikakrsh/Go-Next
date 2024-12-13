@@ -106,7 +106,7 @@ func (s *leaveService) GetLeavesByUser(userId uint) (*LeaveResponseWithCount, er
 
 func (s *leaveService) GetLeaves() ([]LeaveResponse, error) {
 	var leaves []model.Leave
-	if err := s.db.Find(&leaves).Error; err != nil {
+	if err := s.db.Preload("User").Find(&leaves).Error; err != nil {
 		fmt.Printf("Error finding leaves: %v\n", err)
 		return nil, err
 	}
@@ -118,10 +118,10 @@ func (s *leaveService) GetLeaves() ([]LeaveResponse, error) {
 
 	var res []LeaveResponse
 	for _, leave := range leaves {
-		fmt.Println(leaves)
 		res = append(res, LeaveResponse{
 			ID:        leave.ID,
 			UserID:    leave.UserID,
+			FirstName: leave.User.FirstName, // Access the FirstName from the associated User
 			Type:      leave.Type,
 			Detail:    leave.Detail,
 			TimeStart: leave.TimeStart.Format(time.RFC3339),
