@@ -70,8 +70,8 @@ func initDatabase() *gorm.DB {
 	// 	getEnv("DB_PORT", "5432"),
 	// )
 
-	// dsn := "postgresql://postgres:Ardhikakrsh7@127.0.0.1/leave-managerDB?sslmode=disable"
-	dsn := "postgresql://postgres@127.0.0.1/leave-managerDB?sslmode=disable"
+	dsn := "postgresql://postgres:Ardhikakrsh7@127.0.0.1/leave-managerDB?sslmode=disable"
+	// dsn := "postgresql://postgres@127.0.0.1/leave-managerDB?sslmode=disable"
 	// Koneksi ke database
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
