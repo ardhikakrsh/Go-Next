@@ -1,12 +1,15 @@
-import React, { useEffect } from "react";
+"use client";
+
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { login } from "../store/user";
 import { cookies } from "next/headers";
 import axios from "axios";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
-function Nav() {
+import { useEffect } from "react";
+
+export default function Nav() {
   const { user } = useSelector((state: any) => state.user);
   const dispatch = useDispatch();
   const router = useRouter();
@@ -41,16 +44,16 @@ function Nav() {
               {user.first_name} {user.last_name}
             </p>
             <button onClick={logout} className="btn">
-              logout
+              Logout
             </button>
           </div>
         ) : (
           <div className="flex gap-4">
             <Link href={"/login"} className="btn">
-              login
+              Login
             </Link>
             <Link href={"/signup"} className="btn">
-              Signup
+              Sign Up
             </Link>
           </div>
         )}
@@ -58,5 +61,3 @@ function Nav() {
     </div>
   );
 }
-
-export default Nav;
