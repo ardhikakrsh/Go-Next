@@ -1,0 +1,12 @@
+{
+  "dependencies": {
+    "@reduxjs/toolkit": "^2.5.0",
+    "@types/react-redux": "^7.1.34",
+    "axios": "^1.7.9",
+    "react-redux": "^9.2.0"
+  },
+  "devDependencies": {
+    "@types/axios": "^0.9.36",
+    "daisyui": "^4.12.20"
+  }
+}
